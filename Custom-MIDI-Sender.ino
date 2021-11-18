@@ -18,34 +18,36 @@
 //Written by PieterP, 2020-04-18
 //https://github.com/tttapa/Control-Surface
 
-
 #include <Control_Surface.h>
- 
+
 USBMIDI_Interface midi;
- 
+
 // A custom sender to use later. It has to declare two methods:
 // - sendOn(MIDIAddress): will be called when the button is pressed
 // - sendOff(MIDIAddress): will be called when the button is released
 // Other types of senders need to implement different methods.
 // For example, a continuous CC sender just has a send(value, address)
 // method.
-class CustomNoteSender {
- public:
+class CustomNoteSender
+{
+public:
   CustomNoteSender(uint8_t onVelocity, uint8_t offVelocity)
-    : onVelocity(onVelocity), offVelocity(offVelocity) {}
- 
-  void sendOn(MIDIAddress address) {
+      : onVelocity(onVelocity), offVelocity(offVelocity) {}
+
+  void sendOn(MIDIAddress address)
+  {
     Control_Surface.sendNoteOn(address, onVelocity);
   }
- 
-  void sendOff(MIDIAddress address) {
+
+  void sendOff(MIDIAddress address)
+  {
     Control_Surface.sendNoteOff(address, offVelocity);
   }
- 
- private:
+
+private:
   uint8_t onVelocity, offVelocity;
 };
- 
+
 // Now tell the MIDIButton class template (included with the Control
 // Surface library) that it has to use your custom sender class.
 //
@@ -53,28 +55,30 @@ class CustomNoteSender {
 // without having to write `MIDIButton<CustomNoteSender>` all the time,
 // and so we have more control over the constructor arguments.
 // The colon (:) indicates inheritance.
-struct CustomNoteButton : MIDIButton<CustomNoteSender> {
+struct CustomNoteButton : MIDIButton<CustomNoteSender>
+{
   // Constructor
-  CustomNoteButton(pin_t pin, MIDIAddress address, uint8_t onVelocity,
-                   uint8_t offVelocity)
-    : MIDIButton(pin, address, {onVelocity, offVelocity}) {}
+  CustomNoteButton(pin_t pin, MIDIAddress address, uint8_t onVelocity, uint8_t offVelocity)
+      : MIDIButton(pin, address, {onVelocity, offVelocity}) {}
   //  ^~~~~~~~~~ Initialization of the base class MIDIButton
 };
- 
+
 // Now we can instantiate an object of our custom class.
 // The four arguments match the ones of the CustomNoteButton
 // constructor we wrote a couple of lines back.
-CustomNoteButton button {
-  5,              // button pin
-  MIDI_Notes::C(4), // MIDI address
-  0x40,           // on velocity
-  0x10,           // off velocity
+CustomNoteButton button{
+    5,                // button pin
+    MIDI_Notes::C(4), // MIDI address
+    0x40,             // on velocity
+    0x10,             // off velocity
 };
- 
-void setup() {
+
+void setup()
+{
   Control_Surface.begin();
 }
- 
-void loop() {
+
+void loop()
+{
   Control_Surface.loop();
 }
